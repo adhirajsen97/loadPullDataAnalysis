@@ -1,0 +1,227 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>loadPullDataAnalysis package &#8212; Load Pull Data Analysis 1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="loadpulldataanalysis-package">
+<h1>loadPullDataAnalysis package<a class="headerlink" href="#loadpulldataanalysis-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-loadPullDataAnalysis.dataXformation">
+<span id="loadpulldataanalysis-dataxformation-module"></span><h2>loadPullDataAnalysis.dataXformation module<a class="headerlink" href="#module-loadPullDataAnalysis.dataXformation" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="loadPullDataAnalysis.dataXformation.calcGComp">
+<code class="sig-prename descclassname"><span class="pre">loadPullDataAnalysis.dataXformation.</span></code><code class="sig-name descname"><span class="pre">calcGComp</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="reference internal" href="../_modules/loadPullDataAnalysis/dataXformation.html#calcGComp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#loadPullDataAnalysis.dataXformation.calcGComp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="loadPullDataAnalysis.dataXformation.dfFromPkl">
+<code class="sig-prename descclassname"><span class="pre">loadPullDataAnalysis.dataXformation.</span></code><code class="sig-name descname"><span class="pre">dfFromPkl</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="reference internal" href="../_modules/loadPullDataAnalysis/dataXformation.html#dfFromPkl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#loadPullDataAnalysis.dataXformation.dfFromPkl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="loadPullDataAnalysis.dataXformation.dfWithCols">
+<code class="sig-prename descclassname"><span class="pre">loadPullDataAnalysis.dataXformation.</span></code><code class="sig-name descname"><span class="pre">dfWithCols</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ls</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="reference internal" href="../_modules/loadPullDataAnalysis/dataXformation.html#dfWithCols"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#loadPullDataAnalysis.dataXformation.dfWithCols" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="loadPullDataAnalysis.dataXformation.filterColVal">
+<code class="sig-prename descclassname"><span class="pre">loadPullDataAnalysis.dataXformation.</span></code><code class="sig-name descname"><span class="pre">filterColVal</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colName</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filType</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="reference internal" href="../_modules/loadPullDataAnalysis/dataXformation.html#filterColVal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#loadPullDataAnalysis.dataXformation.filterColVal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="loadPullDataAnalysis.dataXformation.interpolatedSlice">
+<code class="sig-prename descclassname"><span class="pre">loadPullDataAnalysis.dataXformation.</span></code><code class="sig-name descname"><span class="pre">interpolatedSlice</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sliceVar</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sliceVal</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="../_modules/loadPullDataAnalysis/dataXformation.html#interpolatedSlice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#loadPullDataAnalysis.dataXformation.interpolatedSlice" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="loadPullDataAnalysis.dataXformation.pickVariable">
+<code class="sig-prename descclassname"><span class="pre">loadPullDataAnalysis.dataXformation.</span></code><code class="sig-name descname"><span class="pre">pickVariable</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selVar</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="../_modules/loadPullDataAnalysis/dataXformation.html#pickVariable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#loadPullDataAnalysis.dataXformation.pickVariable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="loadPullDataAnalysis.dataXformation.splitGammaTuple">
+<code class="sig-prename descclassname"><span class="pre">loadPullDataAnalysis.dataXformation.</span></code><code class="sig-name descname"><span class="pre">splitGammaTuple</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="reference internal" href="../_modules/loadPullDataAnalysis/dataXformation.html#splitGammaTuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#loadPullDataAnalysis.dataXformation.splitGammaTuple" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="loadPullDataAnalysis.dataXformation.splitOnUniqueGammaTuples">
+<code class="sig-prename descclassname"><span class="pre">loadPullDataAnalysis.dataXformation.</span></code><code class="sig-name descname"><span class="pre">splitOnUniqueGammaTuples</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../_modules/loadPullDataAnalysis/dataXformation.html#splitOnUniqueGammaTuples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#loadPullDataAnalysis.dataXformation.splitOnUniqueGammaTuples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-loadPullDataAnalysis.mdfParser">
+<span id="loadpulldataanalysis-mdfparser-module"></span><h2>loadPullDataAnalysis.mdfParser module<a class="headerlink" href="#module-loadPullDataAnalysis.mdfParser" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="loadPullDataAnalysis.mdfParser.calculateMetrics">
+<code class="sig-prename descclassname"><span class="pre">loadPullDataAnalysis.mdfParser.</span></code><code class="sig-name descname"><span class="pre">calculateMetrics</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="reference internal" href="../_modules/loadPullDataAnalysis/mdfParser.html#calculateMetrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#loadPullDataAnalysis.mdfParser.calculateMetrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates load pull data from observed data.
+Adds columns for Pin, Pout, Gain, PAE, drain efficiency,
+and Load Gamma (r: real, jx: imaginary).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>pandas.DataFrame</em>) – The pandas data frame generated by the parseMdf function.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A DataFrame with the columns of calculated metrics added to the DF.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="loadPullDataAnalysis.mdfParser.exportFiles">
+<code class="sig-prename descclassname"><span class="pre">loadPullDataAnalysis.mdfParser.</span></code><code class="sig-name descname"><span class="pre">exportFiles</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../_modules/loadPullDataAnalysis/mdfParser.html#exportFiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#loadPullDataAnalysis.mdfParser.exportFiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports the DataFrame to .csv and .pkl format for later use.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – The pandas data frame generated by the calculatedMetrics or unitConversions function.</p></li>
+<li><p><strong>filepath</strong> (<em>str</em>) – The name of the file to be saved + the location. path/filename, if the file is to be
+saved in the same directory, just provide filename.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Nothing.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="loadPullDataAnalysis.mdfParser.parseMdf">
+<code class="sig-prename descclassname"><span class="pre">loadPullDataAnalysis.mdfParser.</span></code><code class="sig-name descname"><span class="pre">parseMdf</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fileLoc</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="reference internal" href="../_modules/loadPullDataAnalysis/mdfParser.html#parseMdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#loadPullDataAnalysis.mdfParser.parseMdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses an MDF file generated by AWR Cadence (Microwave Office)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fileLoc</strong> (<em>str</em>) – The file location of the MDF file, if the file is in the same directory,
+then only the filename is required.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The MDF file converted into a pandas DataFrame</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="loadPullDataAnalysis.mdfParser.unitConversions">
+<code class="sig-prename descclassname"><span class="pre">loadPullDataAnalysis.mdfParser.</span></code><code class="sig-name descname"><span class="pre">unitConversions</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="reference internal" href="../_modules/loadPullDataAnalysis/mdfParser.html#unitConversions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#loadPullDataAnalysis.mdfParser.unitConversions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts Gain to dB, and Pout/Pin to dBm</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>pandas.DataFrame</em>) – The pandas data frame generated by the calculatedMetrics function.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A DataFrame with the units of Gain, Pin and Pout converted in place.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-loadPullDataAnalysis">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-loadPullDataAnalysis" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Load Pull Data Analysis</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Rutvij Shah et al..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/source/loadPullDataAnalysis.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

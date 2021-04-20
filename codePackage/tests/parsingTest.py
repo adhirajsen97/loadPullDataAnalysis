@@ -1,9 +1,9 @@
-from mdfParser import *
+from loadPullDataAnalysis.mdfParser import *
 
 
 def example_parse():
     # Input: Name of MDF in current dir
-    filename = "../rawData/UTD_LP_File_1.mdf"
+    filename = "../../rawData/UTD_LP_File_1.mdf"
     #mdfName = filename + ".mdf"
 
     # Parse the MDF and read all relevant values
@@ -15,7 +15,7 @@ def example_parse():
     # Convert columns to correct units
     df_prePrcoessed = unitConversions(df_prePrcoessed)
 
-    saveName = "../generatedData/UTD_LP_File_1"
+    saveName = "../../generatedData/UTD_LP_File_1"
     # Export
     exportFiles(df_prePrcoessed, saveName)
 
