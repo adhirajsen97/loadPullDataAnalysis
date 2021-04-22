@@ -9,7 +9,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="loadPullDataAnalysis",
-    version="1.0.1",
+    version="1.2.0",
     author="Rutvij Shah",
     author_email="rutvij.shah96@gmail.com",
     description="A package to perform load pull data analysis.",

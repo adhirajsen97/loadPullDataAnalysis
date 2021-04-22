@@ -13,7 +13,7 @@ def dfFromPkl(filename: str) -> pd.DataFrame:
 def filterColVal(
     df: pd.DataFrame,
     colName: str,
-    value: str,
+    value: float,
     filType: str = None
 ) -> pd.DataFrame:
     '''
@@ -33,7 +33,7 @@ def filterColVal(
 def dfWithCols(df: pd.DataFrame, ls: list[str]) -> pd.DataFrame:
     '''
     '''
-    return pd[ls].copy()
+    return df[ls].copy()
 
 
 def calcGComp(df: pd.DataFrame) -> pd.DataFrame:
@@ -72,34 +72,35 @@ def splitOnUniqueGammaTuples(df: pd.DataFrame) -> list[pd.DataFrame]:
     listGamDf = []
 
     for gam in uniqGammas:
-        gamDf = df_harm1.loc[df_harm1.gammaTuple==gam]
+        gamDf = df.loc[df.gammaTuple==gam]
         gamDf.index = range(len(gamDf))
         listGamDf.append(gamDf)
 
     return listGamDf
 
-def pickVariable(selVar: str) -> dict[str, float]:
+def pickVariable(sliceVar: str, df: pd.DataFrame) -> dict[str, float]:
     '''
     '''
     varInfoDict = {}
     varInfoDict['maxVal'] = df[sliceVar].max()
     varInfoDict['minVal'] = df[sliceVar].min()
-    varInfoDict['stepSize'] = max((maxVal-minVal)/100, 0.1)
+    varInfoDict['stepSize'] = max((varInfoDict['maxVal']-varInfoDict['minVal'])/100, 0.1)
     varInfoDict['defaultVal'] = df[sliceVar].median()
 
     return varInfoDict
 
 
 def interpolatedSlice(
-    df: pd.DataFrame,
+    dfList: list[pd.DataFrame],
     sliceVar: str,
     sliceVal: float
 ) -> tuple[list[str], pd.DataFrame]:
     '''
     '''
 
-    listGamDfC = df.copy()
+    listGamDfC = dfList.copy()
     CONST_VAL = sliceVal
+    selectedVariable = sliceVar
     dfOfLoadsAtVarX = pd.DataFrame()
 
     cols = listGamDfC[-1].columns.to_list()
@@ -120,7 +121,7 @@ def interpolatedSlice(
         listGamDfC[i] = gamDf.append(calcDict, ignore_index=True).sort_values(by=['power'],ignore_index=True)
 
     dfOfLoadsAtVarX = dfOfLoadsAtVarX.sort_values(by=['gammaTuple'],ignore_index=True)
-    colList = df.columns
-    selList = list(set(colList) - {sliceVar, 'r', 'x'})
+    colList = dfList[0].columns
+    selList = list(set(colList) - {sliceVar, 'r', 'jx'})
 
     return selList, dfOfLoadsAtVarX
