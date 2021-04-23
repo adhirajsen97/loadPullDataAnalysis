@@ -10,14 +10,14 @@ def example_parse():
     df_parsed = parseMdf(filename)
 
     # Additional Calculations like Pin, Pout, Gain, Pdc1, Pdc2, Gamma
-    df_prePrcoessed = calculateMetrics(df_parsed)
+    df_preProcessed = calculateMetrics(df_parsed)
 
     # Convert columns to correct units
-    df_prePrcoessed = unitConversions(df_prePrcoessed)
+    df_preProcessed = unitConversions(df_preProcessed)
 
     saveName = "../../generatedData/UTD_LP_File_1"
     # Export
-    exportFiles(df_prePrcoessed, saveName)
+    exportFiles(df_preProcessed, saveName)
 
 
 
