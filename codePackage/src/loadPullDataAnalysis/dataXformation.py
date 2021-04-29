@@ -66,8 +66,28 @@ def calcGComp(df: pd.DataFrame) -> pd.DataFrame:
     :returns: The updated dataframe with gComp added as a column
     :rtype: pandas.DataFrame
     '''
+    df = df.copy()
     maxGain = df['Gain'].max()
     df['gComp'] = df['Gain'] - maxGain
+    return df
+
+def filterOnCompressionThreshold(df: pd.DataFrame, compVal: float) -> pd.DataFrame:
+    '''Filters a dataframe based on a given compression value.
+
+    :param df: DataFrame with the gComp column
+    :type df: pandas.DataFrame
+    :returns: The updated dataframe with points only beyond the compression value.
+    :rtype: pandas.DataFrame
+    '''
+    x = df['Pout'].to_numpy().transpose()
+    f = df['gComp'].to_numpy().transpose()
+    l = np.array([-compVal]*len(x))
+    idx = np.argwhere(np.diff(np.sign(f - l))).flatten()
+    intersections = x[idx]
+    if len(intersections) != 0:
+        df = df[df['Pout'] > intersections[0]]
+
+    #return df, x, f
     return df
 
 def splitGammaTuple(df: pd.DataFrame) -> pd.DataFrame:

@@ -99,8 +99,28 @@
 <span class="sd">    :returns: The updated dataframe with gComp added as a column</span>
 <span class="sd">    :rtype: pandas.DataFrame</span>
 <span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">maxGain</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Gain&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
     <span class="n">df</span><span class="p">[</span><span class="s1">&#39;gComp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Gain&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">maxGain</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="filterOnCompressionThreshold"><a class="viewcode-back" href="../../source/loadPullDataAnalysis.html#loadPullDataAnalysis.dataXformation.filterOnCompressionThreshold">[docs]</a><span class="k">def</span> <span class="nf">filterOnCompressionThreshold</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">compVal</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;Filters a dataframe based on a given compression value.</span>
+
+<span class="sd">    :param df: DataFrame with the gComp column</span>
+<span class="sd">    :type df: pandas.DataFrame</span>
+<span class="sd">    :returns: The updated dataframe with points only beyond the compression value.</span>
+<span class="sd">    :rtype: pandas.DataFrame</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Pout&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;gComp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">compVal</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">f</span> <span class="o">-</span> <span class="n">l</span><span class="p">)))</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">intersections</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">intersections</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Pout&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">intersections</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+    <span class="c1">#return df, x, f</span>
     <span class="k">return</span> <span class="n">df</span></div>
 
 <div class="viewcode-block" id="splitGammaTuple"><a class="viewcode-back" href="../../source/loadPullDataAnalysis.html#loadPullDataAnalysis.dataXformation.splitGammaTuple">[docs]</a><span class="k">def</span> <span class="nf">splitGammaTuple</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
