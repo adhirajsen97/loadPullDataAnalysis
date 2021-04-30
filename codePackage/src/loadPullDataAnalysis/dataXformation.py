@@ -1,6 +1,8 @@
+from __future__ import annotations
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+
 
 def dfFromPkl(filename: str) -> pd.DataFrame:
     '''Reading the pickle file and initialiazing it as a dataframe (df).

@@ -1,20 +1,26 @@
+# lsof -i tcp:8050
 import plotly
 from flask import Flask
-plotly.__version__
+
+#print(plotly.__version__)
 #----------------------------------------------------------------------------------#
 #Library Imports
-import os, pathlib, statistics;
+import os, io, pathlib, statistics;
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 #----------------------------------------------------------------------------------#
 #Dash Imports
-import dash, datetime;
+import dash, base64, datetime;
 #import dash_table
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
+#----------------------------------------------------------------------------------#
+from loadPullDataAnalysis import mdfParser
+from loadPullDataAnalysis import dataXformation as dx
+
 '''
 Requirements: 
 Plotly
@@ -42,33 +48,69 @@ app = dash.Dash(
 #-----------------------------------*API Function*-----------------------------------------------#
 #File Imports
 
-directory = os.getcwd()
+
+
+
+'''directory = os.getcwd()
 filepath = directory + "/DataFiles/" 
 csvName = "UTD_LP_File_1.csv"
 pickleName = "UTD_LP_File_1.pkl"
 #df_csv = pd.read_csv(filepath + csvName) 
-df = pd.read_pickle(filepath + pickleName) 
+#df = pd.read_pickle(filepath + pickleName) '''
 
-#---------------------------------------*API Function*-------------------------------------------#
+global decoded, df, listOfDf
+UPLOAD_DIRECTORY = "./app_uploaded_files"
+PICKLE_LOC = None
+df=pd.DataFrame()
 
-splice_option_list = list(['PAE','Gain','gammaTuple'])
+os.makedirs(UPLOAD_DIRECTORY, exist_ok=True, mode=0o777)
+os.chmod(UPLOAD_DIRECTORY, mode=0o777)
 
-plot_option_lst = list([])
+#---------------------------------------*API Dynamic List for dropdown/Slider*-------------------------------------------#
+
+harm_list = ["1","2","3"]
+
+splice_option_list = ["PAE", "Gain", "gammaTuple"]
+
+plot_option_list = ["PAE", "Gain", "gammaTuple", "Pout"]
 
 #------------------------------------------------------------------------------------------------#
-'''
-    
-        
+'''  
 	dcc.Dropdown(id="slct-plot",
 				 options=[{"label":x, 'value': x} for x in plot_option_lst],
 				 value='-',
-				 className='plot_selector'),
-
-	 
+				 className='plot_selector'), 
 '''
+'''
+    dcc.Dropdown(id="slct_harm",options=[
+                 	{'label':'1', 'value': 1},
+                    {'label':'2', 'value': 2},
+                    {'label':'3', 'value': 3}],
+                 multi=False,
+                 value=1,
+                 style={'width':"40%", 'verticalAlign':"middle"},
+                 className='plot_selector',
+                 ),
+
+    dcc.Dropdown(id="slct_splice",
+    			 options=[{"label":x, 'value': x} for x in splice_option_list],
+    			 multi=False,
+    			 value='-', 
+    			 style={'width':"60%", 'verticalAlign':"middle"},
+    			 className='nav-item active')
+
+    html.Div([
+	    html.Div(id="file_success",className="alert alert-dismissible alert-success", children=[
+			html.Button(type="button", className="close"),
+			html.P("Succefully Read File:"),
+			html.H5(filename),
+	    	html.H6(datetime.datetime.fromtimestamp(date))
+			])
+	])
+    '''
 
 
-#App Layout
+#-----------------------------------------------------------------App Layout--------------------------------------------------------------------------------#
 app.layout = html.Div(className="d-flex flex-column", id='dash-container', children=[
 
 	
@@ -84,18 +126,15 @@ app.layout = html.Div(className="d-flex flex-column", id='dash-container', child
 		    html.H1("LoadPull Analysis Dashboard", 
 		    		style={ 'margin-top':'10px', 'margin-left':'160px', 'font-size':'60px'})
 		    ])
-	
-
 		]),
 	html.Br(),
 #------------------------Body
 	html.Div(className="container-fluid flex-fill", children = [
 		
-		
 
 			html.Div(className = "jumbotron",children = [
 				html.H1("Welcome!", className="display-3",),
-				html.P("This is a dashboard app to help visualize and analyze Transistor Loadpull Data upon input of an MDF File.", className="lead"),
+				html.P("This is a dashboard app to enable slicing and visualization Transistor Loadpull Data upon input of an MDF File Type.", className="lead"),
 				html.Hr(className="my-4"),
 				html.P( ["This dashboard posseses 3 major functionalities: ",
 						html.Br(),
@@ -115,18 +154,14 @@ app.layout = html.Div(className="d-flex flex-column", id='dash-container', child
 				        children=html.Div([
 				        	html.Button(className='btn btn-outline-info',type='radio', autoFocus=True, children=[
 				        		'Drag and Drop or ',
-				            	html.A('Select Files'),
-				            	
-			        		], 
+				            	html.A('Select Files')], 
 			        		style={
-					            'width': '40%',
+					            'width': '50%',
 					            'height': '60px',
-					            'lineHeight': '60px',
-					            #'borderWidth': '1px',
-					            #'borderStyle': 'dashed',
 					            'borderRadius': '5px',
-					            'textAlign': 'center',
-					            'vertical-align':'center',
+					            'font-size':'30px',
+					            'font':'red',
+					            #'vertical-align':'center',
 					            'margin': '10px'
 					        }),
 			        		
@@ -135,7 +170,7 @@ app.layout = html.Div(className="d-flex flex-column", id='dash-container', child
 				        multiple=True
 				    ),
 				html.Div(id='output-data-upload')
-				], style={'text-align':'center', 'borderRadius': '5px', 'borderStyle': 'dashed'}),
+				], style={'text-align':'center', 'borderRadius': '5px', 'borderStyle': 'dashed', 'height':'90px'}),
 				
 			html.Hr(style={
 				            'borderStyle': 'dashed',
@@ -143,33 +178,52 @@ app.layout = html.Div(className="d-flex flex-column", id='dash-container', child
 				            'color': 'white'
 				        }),
 
-
-		    html.Div(className='drpdowns', children = [
-		    dcc.Dropdown(id="slct_harm", options=[
-		                 	{'label':'1', 'value': 1},
-		                    {'label':'2', 'value': 2},
-		                    {'label':'3', 'value': 3}],
-		                 multi=False,
-		                 value=1,
-		                 style={'width':"40%", 'verticalAlign':"middle"},
-		                 className='plot_selector',
-		                 ),
-
-		    dcc.Dropdown(id="slct_splice",
-		    			 options=[{"label":x, 'value': x} for x in splice_option_list],
-		    			 multi=False,
-		    			 value='-', 
-		    			 style={'width':"60%", 'verticalAlign':"middle"},
-		    			 className='plot_selector')
-
-		   ]),
+			html.Br(),
+			html.Br(),
+			html.H2("Slicing/Plotting Selectors: "),
+		    html.Div(id="dropdown-div", children=[
+				
+		    	dbc.Row(id="dropdown-row", children=[
+				
+		    		dbc.Col(children=[
+						html.Label(['Select harmonic'], style={'font-weight': 'bold', "text-align": "left"}),
+		    			dcc.Dropdown(id="slct_harm", options=[{'label':x, 'value':x}for x in harm_list], 
+						style={'width':'150px','vertical-align':"middle", 'color': 'black'},
+						value='1',
+						multi=False, 
+		    			), html.Span(id='harm_message', className='badge badge-success'),
+					]),
+		    		dbc.Col(children=[
+						html.Label(['Select Slice'], style={'font-weight': 'bold', "text-align": "left"}),
+		    			dcc.Dropdown(id="slct_splice", options=[{'label':x, 'value':x}for x in splice_option_list],
+						style={'width':'250px','vertical-align':"middle", 'color': 'black'},
+						placeholder = 'None',
+						), 
+						dcc.Slider(id='slice-slider', 
+									min=0, 
+									max=9, 
+									step=None,
+									marks={}),
+						html.Span(id='splicing_message', className='badge badge-success'),
+					]),
+		    		dbc.Col(children=[
+						html.Label(['Select Plotting Varible'], style={'font-weight': 'bold', "text-align": "left"}),
+		    			dcc.Dropdown(id="slct_plot",options=[{'label':x, 'value':x}for x in plot_option_list],
+						style={'width':'250px','vertical-align':"middle", 'color': 'black'},
+						placeholder='None',
+						), html.Span(id='plot_message', className='badge badge-success')
+					])
+				])
+			], style={"display": "flex", "flexWrap": "wrap"} ),
 
 		    html.Br(),
 
 		    html.Div([
-			    html.Span(id='splicing', className='badge badge-success'),
+			    
 			    html.Br(),
-				html.Span(id='output_container', className='badge badge-success'),
+				
+				html.Br(),
+				
 			]),
 
 			html.Div([
@@ -189,15 +243,40 @@ app.layout = html.Div(className="d-flex flex-column", id='dash-container', child
 
 
 #----------------------------------------------------------------------------------#
-#Filename parse function to check name
-def parse_contents(contents, filename, date):
-	content_type, content_string = contents.split(',')
 
-	decoded = base64.b64decode(content_string)
+
+def uploaded_files():
+    """List the files in the upload directory."""
+    files = []
+    for filename in os.listdir(UPLOAD_DIRECTORY):
+        path = os.path.join(UPLOAD_DIRECTORY, filename)
+        if os.path.isfile(path):
+            files.append(filename)
+    return files
+
+#Filename parse function to check name
+def file_check(contents, filename, date):
+	#https://docs.faculty.ai/user-guide/apps/examples/dash_file_upload_download.html
+	#print(contents)
+	#content_type, content_string = contents.readlines()
+
+	# API function call
+	# Send contents into MDF Parser
+	# return DF from parser and assign to global DF variable 
+	#decoded = base64.b64decode(contents)
 	try:
 		if '.mdf' in filename:
 		    # Assume that the user uploaded a MDF file
-		    print("printed")
+			global df
+			save_file(contents, filename)
+			mdfLoc = str(UPLOAD_DIRECTORY+ "/" +filename)
+			df = mdfParser.parseMdf(mdfLoc)
+			df = mdfParser.calculateMetrics(df)
+			df = mdfParser.unitConversions(df)
+			filepath = UPLOAD_DIRECTORY + "/" + filename[:-4]
+			PICKLE_LOC = filepath + '.pkl'
+			mdfParser.exportFiles(df, filepath)
+			print(Read and converted)
 		else:
 			return dbc.Alert(
             html.B("Error! \"{}\" is not a valid .mdf file.".format(filename)),
@@ -205,34 +284,30 @@ def parse_contents(contents, filename, date):
             dismissable=True,
             is_open=True,
         	)
-			'''html.Div([ html.Div(id="file_fail",className="alert alert-dismissible alert-danger", children=[
-																html.Button(type="button", className="close"),
-																"Failed to Read MDF File: ", html.U(filename), 
-																html.H6(datetime.datetime.fromtimestamp(date))
-															])
-														])'''
+			
 
 	except Exception as e:
 		print(e)
-		return html.Div(['Error occurred! Please try again.'])
+		return dbc.Alert(
+            html.B("Error Occurred! \"{}\" file had a problem".format(filename)),
+            className="alert alert-dismissible alert-danger",
+            dismissable=True,
+            is_open=True,
+        	)
 
 	return dbc.Alert(
             html.B("Success! File: \"{}\"  has been read.".format(filename)),
-	    	
             className="alert alert-dismissible alert-success",
             dismissable=True,
             is_open=True,
         	)
 
 
-	html.Div([
-	    html.Div(id="file_success",className="alert alert-dismissible alert-success", children=[
-			html.Button(type="button", className="close"),
-			html.P("Succefully Read File:"),
-			html.H5(filename),
-	    	html.H6(datetime.datetime.fromtimestamp(date))
-			])
-	])
+def save_file(content, name):
+    """Decode and store a file uploaded with Plotly Dash."""
+    data = content.encode("utf8").split(b";base64,")[1]
+    with open(os.path.join(UPLOAD_DIRECTORY, name), "wb") as fp:
+        fp.write(base64.decodebytes(data))
 #----------------------------------------------------------------------------------#
 #Callback Functioins 
 
@@ -248,50 +323,88 @@ def parse_contents(contents, filename, date):
 def update_output(list_of_contents, list_of_names, list_of_dates):
     if list_of_contents is not None:
         children = [
-            parse_contents(c, n, d) for c, n, d in
-            zip(list_of_contents, list_of_names, list_of_dates)]
+            file_check(c, n, d) for c, n, d in
+            zip(list_of_contents, list_of_names, list_of_dates)],
+		
         return children
+
 
 #----------------------------------------------------------------------------------#
 #Callback for harm sliice
 @app.callback(
-	Output(component_id='splicing', component_property='children'),
-	[Input(component_id='slct_harm', component_property='value')
-	])
+	[
+	Output(component_id='harm_message', component_property='children'),
+	Output(component_id='splicing_message', component_property='children'),
+	Output(component_id='plot_message', component_property='children')
+	],
+	[
+	Input(component_id='slct_harm', component_property='value'),
+	Input(component_id='slct_splice', component_property='value'),
+	Input(component_id='slct_plot', component_property='value')
+	]
+	)
 
-def harmonic(slct_harm):#, option_splice
-	#print(option_harm, option_splice, option_plot)
-	splicing = "Harmonic chosen by user is: {}".format(slct_harm)
+def drpdowns(slct_harm, slct_splice, slct_plot):
+	
+	
 
+	# function call to slive df
+	#sliceDF(slct_harm, slct_splice, slct_plot)
+	#varInfoDict = getVarRangeForSlice(harm_message, splicing_message)
+	parsedDf = dx.dfFromPkl(PICKLE_LOC)
+	print(parsedDf.head())
+	parsedDf = dx.filterColVal(parsedDf, 'harmonic', 1, 'eq')
+	parsedDf = dx.dfWithCols(parsedDf, ['gammaTuple', 'power', 'harmonic', 'Pin', 'Pout', 'Gain', 'PAE', 'drainEff',
+        'r', 'jx'])
+	parsedDf = dx.splitGammaTuple(parsedDf)
+	listGamDf = dx.splitOnUniqueGammaTuples(parsedDf)
+	listOfDf = listGamDf
+	varInfoDict = dx.pickVariable(slice, parsedDf)
+	
+	'''maxV = varInfoDict['maxVal'] 
+	minV = varInfoDict['minVal']
+	step = varInfoDict['stepSize']xs
+	defaultV = varInfoDict['defaultVal']'''
+   
 	################## Filtering DF by harmonic #######################
-	#print(df["harmonic"])
-	df_harm1 = df[(df["harmonic"]==slct_harm)]
-	df_harm1 = df_harm1[['gammaTuple', 'power', 'Pin', 'Pout', 'Gain', 'PAE', 'drainEff', 'r', 'x']].copy()
-	df.set_index(keys=['gammaTuple'], drop=False,inplace=True)
-	uniqGammas=df['gammaTuple'].unique().tolist()
-
-	listGamDf = []
-
-	for gam in uniqGammas:
-	    gamDf = df_harm1.loc[df_harm1.gammaTuple==gam]
-	    gamDf.index = range(len(gamDf))
-	    listGamDf.append(gamDf)
+	'''#print(df["harmonic"])
+				df_harm1 = df[(df["harmonic"]==slct_harm)]
+				df_harm1 = df_harm1[['gammaTuple', 'power', 'Pin', 'Pout', 'Gain', 'PAE', 'drainEff', 'r', 'x']].copy()
+				df.set_index(keys=['gammaTuple'], drop=False,inplace=True)
+				uniqGammas=df['gammaTuple'].unique().tolist()
+				listGamDf = []
+				for gam in uniqGammas:
+				    gamDf = df_harm1.loc[df_harm1.gammaTuple==gam]
+				    gamDf.index = range(len(gamDf))
+				    listGamDf.append(gamDf)'''
 	###################################################################
 
-	return splicing#, fig
+	harm_message = "Harmonic set to:  {}".format(slct_harm)
+	splicing_message = "Slice option chosen:  {}".format(slct_splice)
+	plot_message = "Plotting variable chosen:  {}".format(slct_plot)
+
+	return harm_message, splicing_message, plot_message#, fig
 
 #----------------------------------------------------------------------------------#
-#Callback for splicing index variable (PAE, GAIN, GammaTuple)
-@app.callback(
-	Output(component_id='output_container', component_property='children'),
-	[Input(component_id='slct_splice', component_property='value')]
-	)
-def splic1(value):
-	print(type(value))
-	output_container = "Splice option by user is: {}".format(value)
-	return output_container
 
-#---------------------------------*API Function Call*-------------------------------------------------#
+
+
+#---------------------*API Function Call(slice DF)*--------------------------------#
+def getVarRangeForSlice(harm, slice):
+	global df, listOfDf
+	parsedDf = df.copy()
+	parsedDf = dx.filterColVal(parsedDf, 'harmonic', 1, 'eq')
+	parsedDf = dx.dfWithCols(parsedDf, ['gammaTuple', 'power', 'harmonic', 'Pin', 'Pout', 'Gain', 'PAE', 'drainEff',
+        'r', 'jx'])
+	parsedDf = dx.splitGammaTuple(parsedDf)
+	listGamDf = dx.splitOnUniqueGammaTuples(parsedDf)
+	df = parsedDf
+	listOfDf = listGamDf
+	varInfoDict = dx.pickVariable(slice, parsedDf)
+	print(varInfoDict)
+	
+
+	
 
 #----------------------------------------------------------------------------------#
 
@@ -319,6 +432,10 @@ def spliced():
 @server.route("/LoadPull-Dashboard/")
 def my_dash_app():
     return app.index()
+
+@server.route("/api-calls/")
+def function_calls():
+	return 0
 
 if __name__ == '__main__':
 	app.run_server(debug=True)
