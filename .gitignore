@@ -4,6 +4,8 @@ __pycache__/
 *$py.class
 *.pyc
 
+#Package Installation [Future Pip versions will build pacakages in tree.]
+build/
+
 # Folder view configuration files
 .DS_Store
-
