@@ -194,7 +194,7 @@ def interpolatedSlice(
             #calcVal = barycentric_interpolate(selVarList, colVals, FIXED_POUT)
             calcDict[col] = round(float(calcVal),6)
         calcDict[selectedVariable] = CONST_VAL
-        calcDict['gammaTuple'] = gamDf['gammaTuple'][0]
+        calcDict['gammaTuple'] = gamDf['gammaTuple'].iloc[0]
         dfOfLoadsAtVarX = dfOfLoadsAtVarX.append(calcDict, ignore_index=True)
         listGamDfC[i] = gamDf.append(calcDict, ignore_index=True).sort_values(by=['power'],ignore_index=True)
 
