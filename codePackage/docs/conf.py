@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath('../'))
 
 project = 'Load Pull Data Analysis'
 copyright = '2021, Rutvij Shah et al.'
-author = 'Rutvij Shah, Adhiraj Sen, Ashby Joseph, Hanna Kessler, SubhashReddy Balam'
+author = 'Rutvij S, Adhiraj S, Ashby J, Hanna K, Subhash RB'
 
 # The full version, including alpha/beta/rc tags
 release = '1.0'
@@ -52,3 +52,5 @@ html_theme = 'alabaster'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+latex_elements = { 'classoptions': ',openany,oneside'}
