@@ -5,7 +5,7 @@ from flask import Flask
 #print(plotly.__version__)
 #----------------------------------------------------------------------------------#
 #Library Imports
-import os, io, pathlib, statistics;
+import os, io, pickle, pathlib, statistics;
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -148,29 +148,30 @@ app.layout = html.Div(className="d-flex flex-column", id='dash-container', child
 					])
 				]),
 
-			html.Div(id='upload-container', children=[
-				dcc.Upload(
-				        id='upload-data',
-				        children=html.Div([
-				        	html.Button(className='btn btn-outline-info',type='radio', autoFocus=True, children=[
-				        		'Drag and Drop or ',
-				            	html.A('Select Files')], 
-			        		style={
-					            'width': '50%',
-					            'height': '60px',
-					            'borderRadius': '5px',
-					            'font-size':'30px',
-					            'font':'red',
-					            #'vertical-align':'center',
-					            'margin': '10px'
-					        }),
-			        		
-				        ]), # <- children container
-				        # Allow multiple files to be uploaded
-				        multiple=True
-				    ),
-				html.Div(id='output-data-upload')
-				], style={'text-align':'center', 'borderRadius': '5px', 'borderStyle': 'dashed', 'height':'90px'}),
+			html.Div([
+					
+					dcc.Upload(
+							id='upload-data', className='btn btn-outline-info',
+							children=[
+								html.Div(['Drag and Drop or', html.A('Select Files') ]),
+							], 
+							style={
+								'width': '50%',
+								'height': '60px',
+								'borderRadius': '5px',
+								'font-size':'30px',
+								'font':'red',
+								#'vertical-align':'center',
+								'margin': '10px'
+								},
+							
+						
+							# <- children container
+							# Allow multiple files to be uploaded
+							multiple=True
+					),
+					html.Div(id='output-data-upload'),
+			]),
 				
 			html.Hr(style={
 				            'borderStyle': 'dashed',
@@ -199,11 +200,6 @@ app.layout = html.Div(className="d-flex flex-column", id='dash-container', child
 						style={'width':'250px','vertical-align':"middle", 'color': 'black'},
 						placeholder = 'None',
 						), 
-						dcc.Slider(id='slice-slider', 
-									min=0, 
-									max=9, 
-									step=None,
-									marks={}),
 						html.Span(id='splicing_message', className='badge badge-success'),
 					]),
 		    		dbc.Col(children=[
@@ -214,6 +210,7 @@ app.layout = html.Div(className="d-flex flex-column", id='dash-container', child
 						), html.Span(id='plot_message', className='badge badge-success')
 					])
 				])
+				
 			], style={"display": "flex", "flexWrap": "wrap"} ),
 
 		    html.Br(),
@@ -253,6 +250,20 @@ def uploaded_files():
         if os.path.isfile(path):
             files.append(filename)
     return files
+def success(filename):
+	dbc.Alert(id='succ',
+            children=[html.B("Success! File: \"{}\"  has been read.".format(filename))],
+            className="alert alert-dismissible alert-success",
+            dismissable=True,
+            is_open=True,
+			)
+def fail(filename):
+	dbc.Alert(id='fail', 
+            children=[html.B("Error Occurred! \"{}\" file had a problem".format(filename))],
+            className="alert alert-dismissible alert-danger",
+            dismissable=True,
+            is_open=True,
+			)
 
 #Filename parse function to check name
 def file_check(contents, filename, date):
@@ -277,30 +288,20 @@ def file_check(contents, filename, date):
 			PICKLE_LOC = filepath + '.pkl'
 			mdfParser.exportFiles(df, filepath)
 			print(Read and converted)
+			success(filename)
+
 		else:
-			return dbc.Alert(
-            html.B("Error! \"{}\" is not a valid .mdf file.".format(filename)),
-            className="alert alert-dismissible alert-danger",
-            dismissable=True,
-            is_open=True,
-        	)
+			print("NO")
+			pass
+			
+		
 			
 
 	except Exception as e:
-		print(e)
-		return dbc.Alert(
-            html.B("Error Occurred! \"{}\" file had a problem".format(filename)),
-            className="alert alert-dismissible alert-danger",
-            dismissable=True,
-            is_open=True,
-        	)
+		return fail(filename)
 
-	return dbc.Alert(
-            html.B("Success! File: \"{}\"  has been read.".format(filename)),
-            className="alert alert-dismissible alert-success",
-            dismissable=True,
-            is_open=True,
-        	)
+
+	
 
 
 def save_file(content, name):
@@ -351,23 +352,34 @@ def drpdowns(slct_harm, slct_splice, slct_plot):
 	# function call to slive df
 	#sliceDF(slct_harm, slct_splice, slct_plot)
 	#varInfoDict = getVarRangeForSlice(harm_message, splicing_message)
-	parsedDf = dx.dfFromPkl(PICKLE_LOC)
-	print(parsedDf.head())
-	parsedDf = dx.filterColVal(parsedDf, 'harmonic', 1, 'eq')
-	parsedDf = dx.dfWithCols(parsedDf, ['gammaTuple', 'power', 'harmonic', 'Pin', 'Pout', 'Gain', 'PAE', 'drainEff',
-        'r', 'jx'])
-	parsedDf = dx.splitGammaTuple(parsedDf)
-	listGamDf = dx.splitOnUniqueGammaTuples(parsedDf)
-	listOfDf = listGamDf
-	varInfoDict = dx.pickVariable(slice, parsedDf)
+	try :
+		if (PICKLE_LOC):
+			parsedDf = pd.read_pickle(PICKLE_LOC)
+			print(parsedDf.head())
+	except e:
+		print(e)
+
 	
-	'''maxV = varInfoDict['maxVal'] 
+	'''
+	f = open('/app_uploaded_files/UTD_LP_File_1.pkl', 'rb')
+	parsedDf = pickle.load(f)
+	#print(parsedDf.head())
+	
+				parsedDf = dx.filterColVal(parsedDf, 'harmonic', 1, 'eq')
+				parsedDf = dx.dfWithCols(parsedDf, ['gammaTuple', 'power', 'harmonic', 'Pin', 'Pout', 'Gain', 'PAE', 'drainEff',
+			        'r', 'jx'])
+				parsedDf = dx.splitGammaTuple(parsedDf)
+				listGamDf = dx.splitOnUniqueGammaTuples(parsedDf)
+				listOfDf = listGamDf
+				varInfoDict = dx.pickVariable(slice, parsedDf)
+	
+	maxV = varInfoDict['maxVal'] 
 	minV = varInfoDict['minVal']
-	step = varInfoDict['stepSize']xs
-	defaultV = varInfoDict['defaultVal']'''
+	step = varInfoDict['stepSize']
+	defaultV = varInfoDict['defaultVal']
    
 	################## Filtering DF by harmonic #######################
-	'''#print(df["harmonic"])
+	#print(df["harmonic"])
 				df_harm1 = df[(df["harmonic"]==slct_harm)]
 				df_harm1 = df_harm1[['gammaTuple', 'power', 'Pin', 'Pout', 'Gain', 'PAE', 'drainEff', 'r', 'x']].copy()
 				df.set_index(keys=['gammaTuple'], drop=False,inplace=True)
@@ -376,7 +388,8 @@ def drpdowns(slct_harm, slct_splice, slct_plot):
 				for gam in uniqGammas:
 				    gamDf = df_harm1.loc[df_harm1.gammaTuple==gam]
 				    gamDf.index = range(len(gamDf))
-				    listGamDf.append(gamDf)'''
+				    listGamDf.append(gamDf)
+	'''
 	###################################################################
 
 	harm_message = "Harmonic set to:  {}".format(slct_harm)
