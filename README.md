@@ -2,6 +2,8 @@
 
 Follow the link for [API-Documentation](https://github.com/0xrutvij/loadPullDataAnalysis/blob/main/loadpulldataanalysis.pdf)
 
+To install the API module as a local python pacakge, run `pip3 install .`
+
 ### Reposito-ree
 ```
 .
