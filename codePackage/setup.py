@@ -9,13 +9,13 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="loadPullDataAnalysis",
-    version="1.2.6",
+    version="1.3.0",
     author="Rutvij Shah",
     author_email="rutvij.shah96@gmail.com",
     description="A package to perform load pull data analysis.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/0xrutvij/LP_S21_AAHRS",
+    url="https://github.com/0xrutvij/loadPullDataAnalysis",
     classifiers=[
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",

@@ -1,9 +1,9 @@
 from loadPullDataAnalysis.mdfParser import *
 
 
-def example_parse():
+def example_parse(file, save):
     # Input: Name of MDF in current dir
-    filename = "../../rawData/UTD_LP_File_1.mdf"
+    filename = file
     #mdfName = filename + ".mdf"
 
     # Parse the MDF and read all relevant values
@@ -15,7 +15,7 @@ def example_parse():
     # Convert columns to correct units
     df_preProcessed = unitConversions(df_preProcessed)
 
-    saveName = "../../generatedData/UTD_LP_File_1"
+    saveName = save
     # Export
     exportFiles(df_preProcessed, saveName)
 
@@ -23,4 +23,8 @@ def example_parse():
 
 # Execute Main
 if __name__ == "__main__":
-    example_parse()
+    files = ["../../rawData/UTD_LP_File_1.mdf", "../../rawData/test.mdf"]
+    saves = ["../../generatedData/UTD_LP_File_1", "../../generatedData/test"]
+
+    for f, s in zip(files, saves):
+        example_parse(f,s)

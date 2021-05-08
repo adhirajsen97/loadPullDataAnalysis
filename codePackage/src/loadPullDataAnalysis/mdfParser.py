@@ -2,7 +2,7 @@
 # Date:      04/17/2021
 # Author:    Rutvij Shah, Adhiraj Sen
 # Email:     rutvij.shah@utdallas.edu
-# Version:   2.0
+# Version:   2.1
 # Copyright: 2021, All Rights Reserved
 #
 # Written for the senior design project, Load Pull Analysis Team.
@@ -119,9 +119,13 @@ def calculateMetrics(df: pd.DataFrame) -> pd.DataFrame:
     :rtype: pandas.DataFrame
     """
 
-    df['Pin'] = 0.5*((abs(df['a1']**2) - abs(df['b1'])**2))
+    df['Gs'] = 0
+    df['Gin'] = df['b1']/df['a1']
+    df['Pdel'] = 0.5*((abs(df['a1']**2) - abs(df['b1'])**2))
+    df['Pin'] = 0.5*abs(df['a1']**2) / (1-df['Gs']**2)
     df['Pout'] = 0.5*((abs(df['b2']**2) - abs(df['a2'])**2)) #dBm
     df['Gain'] = df['Pout']/df['Pin']
+    df['PGain'] = df['Pout']/df['Pdel']
     df['Pdc1'] = df['V1']*df['I1']
     df['Pdc2'] = df['V2']*df['I2']
     df['PAE'] = ((df['Pout']-df['Pin'])/df['Pdc2'])*100
@@ -150,11 +154,13 @@ def unitConversions(df: pd.DataFrame) -> pd.DataFrame:
     :rtype: pandas.DataFrame
     """
     to_dB = lambda x: 10 * math.log10(abs(x))
-    to_dBm = lambda x: 10 * math.log10(abs(x)*1000)
+    #to_dBm = lambda x: 10 * math.log10(abs(x)*1000)
 
+    df['PGain'] = df['PGain'].apply(to_dB)
     df['Gain'] = df['Gain'].apply(to_dB)
-    df['Pout'] = df['Pout'].apply(to_dBm)
-    df['Pin'] = df['Pin'].apply(to_dBm)
+    df['Pout'] = df['Pout'].apply(to_dB)
+    df['Pin'] = df['Pin'].apply(to_dB)
+    df['Pdel'] = df['Pdel'].apply(to_dB)
 
     return df
 

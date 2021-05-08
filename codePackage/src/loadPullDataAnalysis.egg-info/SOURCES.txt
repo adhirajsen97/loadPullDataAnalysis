@@ -1,9 +1,0 @@
-README.md
-setup.py
-src/loadPullDataAnalysis/__init__.py
-src/loadPullDataAnalysis/dataXformation.py
-src/loadPullDataAnalysis/mdfParser.py
-src/loadPullDataAnalysis.egg-info/PKG-INFO
-src/loadPullDataAnalysis.egg-info/SOURCES.txt
-src/loadPullDataAnalysis.egg-info/dependency_links.txt
-src/loadPullDataAnalysis.egg-info/top_level.txt
