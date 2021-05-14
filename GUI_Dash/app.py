@@ -73,48 +73,15 @@ splice_option_list = ["PAE", "Pout", "Gain"] #
 
 plot_option_list = ["PAE", "Gain", "gammaTuple", "Pout"]
 
-#------------------------------------------------------------------------------------------------#
-'''  
-	dcc.Dropdown(id="slct-plot",
-				 options=[{"label":x, 'value': x} for x in plot_option_lst],
-				 value='-',
-				 className='plot_selector'), 
-'''
-'''
-    dcc.Dropdown(id="slct_harm",options=[
-                 	{'label':'1', 'value': 1},
-                    {'label':'2', 'value': 2},
-                    {'label':'3', 'value': 3}],
-                 multi=False,
-                 value=1,
-                 style={'width':"40%", 'verticalAlign':"middle"},
-                 className='plot_selector',
-                 ),
-
-    dcc.Dropdown(id="slct_splice",
-    			 options=[{"label":x, 'value': x} for x in splice_option_list],
-    			 multi=False,
-    			 value='-', 
-    			 style={'width':"60%", 'verticalAlign':"middle"},
-    			 className='nav-item active')
-
-    html.Div([
-	    html.Div(id="file_success",className="alert alert-dismissible alert-success", children=[
-			html.Button(type="button", className="close"),
-			html.P("Succefully Read File:"),
-			html.H5(filename),
-	    	html.H6(datetime.datetime.fromtimestamp(date))
-			])
-	])
-    '''
 
 
-#-----------------------------------------------------------------App Layout--------------------------------------------------------------------------------#
+
+#--------------------------------------App Layout------------------------------------------------#
 app.layout = html.Div(className="d-flex flex-column", id='dash-container', children=[
 
 	
 
-	html.Header(className="page-header", children = [		#------------------------Header
+	html.Header(className="page-header", children = [		
 
 		html.Img(src=app.get_asset_url("logo192.png"), style={
 															'float': 'left',
@@ -129,7 +96,7 @@ app.layout = html.Div(className="d-flex flex-column", id='dash-container', child
 		    ])
 		]),
 	html.Br(),
-#------------------------Body
+
 	html.Div(id = 'body', className="container-fluid flex-fill", children = [
 		
 
@@ -213,18 +180,12 @@ app.layout = html.Div(className="d-flex flex-column", id='dash-container', child
 				
 			], style={"display": "flex", "flexWrap": "wrap", "position":"relative"} ),
 
-		    
-
 		    html.Div([
 			    html.Br(),
-
 			    html.Br(),
-				
 				html.Br(),
-				
 			]),
-
-	            
+  
             html.Div([
             	dbc.Row([
 
@@ -241,7 +202,6 @@ app.layout = html.Div(className="d-flex flex-column", id='dash-container', child
 	                 
             	], style={"padding-top":"20px", 'style':'800px'}),
             	dbc.Row([
-
             		dbc.Col([
             			dcc.Checklist(id='gComp-checklist',options=[
             				{'label' : ' gComp', 'value' : 'gComp'},
@@ -264,9 +224,7 @@ app.layout = html.Div(className="d-flex flex-column", id='dash-container', child
             	
        		], style={"display": "flex", "flexWrap": "wrap", "padding-top":"20px"} ),
     	
-
 		    html.Div(id='slider-output'),
-		    
 			
 			html.Div([
 				dbc.Row([
@@ -275,14 +233,8 @@ app.layout = html.Div(className="d-flex flex-column", id='dash-container', child
 					dbc.Col([html.Button('Plot Surface', id='btn-nclicks-3', className = "btn btn-primary", type="button", style={"width":"100px"}),]),
 					dbc.Col([html.Button('Execute gComp Slice on data', id='btn-nclicks-4', className = "btn btn-primary", type="button", style={"width":"150px"}),]),
 					])
-    				
-					
-					
-					
-
     				#html.Div(id='container-button-timestamp')
             ], style={"display": "flex", "flexWrap": "wrap", "padding":"15px", "align":"center"}),
-			
 		    
 		    dcc.Graph(id='plt', figure={}, style={'width':'700px', 'height':'700px'}) #set proper ID
 		]),

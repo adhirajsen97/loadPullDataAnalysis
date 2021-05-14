@@ -4,6 +4,33 @@ Follow the link for [API-Documentation](https://github.com/0xrutvij/loadPullData
 
 To install the API module as a local python pacakge, run `pip3 install .`
 
+Install requirements.txt:
+  `cd <Path to repository>/GUI_Dash/ && pip3 install -r requirements.txt`
+
+Create Unix Executable:
+
+        cd <Path to repository>/GUI_Dash/
+        cp app.py ./app
+        chmod 755 app
+        
+Launch App on Unix Machines:
+
+       
+        cd <Path to repository>/GUI_Dash/
+        python3 app.py
+        
+OR Double click on 'app' created in the earlier step.
+
+Launch App on Windows Machines:
+- Ensure Python3 is installed and Python and pip are up to date
+- Follow steps to install requirements.txt
+- Launch the app by running
+        
+        cd <Path to repository>\GUI_Dash\ 
+        .\app.py 
+        
+OR executing app.py with python `python .\app.py`
+
 ### Reposito-ree
 ```
 .
