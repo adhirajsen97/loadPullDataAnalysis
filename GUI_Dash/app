@@ -1,16 +1,13 @@
 #! /usr/local/bin/python3
 
-##Stuff to add
-# 	- Plotting variable dynamic list Dropdown
-
-
 # lsof -i tcp:8050
+#----------------------------------------------------------------------------------#
+#WSGI Imports
 import plotly
 import webbrowser
 from flask import Flask
 from threading import Timer
 
-#print(plotly.__version__)
 #----------------------------------------------------------------------------------#
 #Library Imports
 import os, io, pickle, pathlib, statistics;
@@ -28,9 +25,10 @@ import dash_html_components as html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 #----------------------------------------------------------------------------------#
+# In-Built Api Imports
 from loadPullDataAnalysis import mdfParser
 from loadPullDataAnalysis import dataXformation as dx
-
+#----------------------------------------------------------------------------------#
 '''
 Requirements: 
 Plotly
@@ -58,18 +56,16 @@ app = dash.Dash(
 # Initiate global varibales that cover the scope of the entire code
 
 global decoded, listOfDf, PICKLE_LOC, fileCheck, parsedDf, slider_range, slct, harm, slicedDfAtVarX
-global btn1hist, btn2hist, btn3hist, btn4hist
 listOfDf = []
-btn1hist = btn2hist = btn3hist = btn4hist = 0
 UPLOAD_DIRECTORY = "./app_uploaded_files"
 PICKLE_LOC = None
 df=pd.DataFrame()
 parsedDf = pd.DataFrame()
 
+#Create local file storage "app_uploaded_files"
 os.makedirs(UPLOAD_DIRECTORY, exist_ok=True, mode=0o777)
 os.chmod(UPLOAD_DIRECTORY, mode=0o777)
-
-#---------------------------------------*API Dynamic List for dropdown/Slider*-------------------------------------------#
+#-------------------------------------*List of dropdown*-----------------------------------------#
 
 harm_list = ["1","2","3"]
 
@@ -273,16 +269,22 @@ app.layout = html.Div(className="d-flex flex-column", id='dash-container', child
 		    
 			
 			html.Div([
-    				html.Button('Plot Scatter', id='btn-nclicks-1', className = "btn btn-primary", type="button", style={"width":"100px"}),
-					html.Button('Plot Contour', id='btn-nclicks-2', className = "btn btn-primary", type="button", style={"width":"100px"}),
-					html.Button('Plot Surface', id='btn-nclicks-3', className = "btn btn-primary", type="button", style={"width":"100px"}),
-					html.Button('Plot --', id='btn-nclicks-4', className = "btn btn-primary", type="button", style={"width":"100px"}),
+				dbc.Row([
+					dbc.Col([html.Button('Plot Scatter', id='btn-nclicks-1', className = "btn btn-primary", type="button", style={"width":"100px"})]),
+					dbc.Col([html.Button('Plot Contour', id='btn-nclicks-2', className = "btn btn-primary", type="button", style={"width":"100px"}),]),
+					dbc.Col([html.Button('Plot Surface', id='btn-nclicks-3', className = "btn btn-primary", type="button", style={"width":"100px"}),]),
+					dbc.Col([html.Button('Execute gComp Slice on data', id='btn-nclicks-4', className = "btn btn-primary", type="button", style={"width":"150px"}),]),
+					])
+    				
+					
+					
+					
 
     				#html.Div(id='container-button-timestamp')
             ], style={"display": "flex", "flexWrap": "wrap", "padding":"15px", "align":"center"}),
 			
 		    
-		    html.Div(id='plt') #set proper ID
+		    dcc.Graph(id='plt', figure={}, style={'width':'700px', 'height':'700px'}) #set proper ID
 		]),
 
 		html.Footer() #------------------------Footer
@@ -365,6 +367,9 @@ def file_check(contents, filename):
 	# Send contents into MDF Parser
 	# return DF from parser and assign to global DF variable 
 	#decoded = base64.b64decode(contents)
+
+	
+
 	try:
 		if '.mdf' in str(filename):
 		    # Assume that the user uploaded a MDF file
@@ -470,6 +475,8 @@ def drpdowns(slct_harm, slct_splice, slct_plot):
 	Output(component_id='slice', component_property='min'),
 	Output(component_id='slice', component_property='max'),
 	Output(component_id='slice', component_property='step'),
+	#Output(component_id='slice', component_property='value'),
+
 	#Output(component_id='slider-output', component_property='children'),
 	Output(component_id='slider-label', component_property='children'),
 	Output(component_id='slider-label-2', component_property='children')
@@ -479,7 +486,6 @@ def drpdowns(slct_harm, slct_splice, slct_plot):
 	Input(component_id='slct_splice', component_property='value'),
 	Input(component_id='slice', component_property='value'),
 	Input(component_id='gComp-checklist', component_property='value'),
-	
 	Input(component_id='g-comp', component_property='value')
 	]
 
@@ -495,7 +501,6 @@ def slide(slct, slice, chk_gComp, g_comp):
 
 	if fileCheck is True:
 		if slct is not None:
-			
 			min, max, step, value = getVarRangeForSlice(harm, slct)
 			#slider_output = "Slider Value chosen:  {}".format(slice)
 			n = 1
@@ -597,7 +602,7 @@ def check_gComp(opt, slct, ind):
 
 	else:
 		return dbc.Alert( 
-	            children=[html.B("Enable G Compression Slice")],
+	            children=[html.B("<< Enable G Compression Slice")],
 	            className="alert alert-dismissible alert-danger",
 	            dismissable=False,
 	            is_open=True,
@@ -636,7 +641,7 @@ def checkDrpDown(opt, ind):
 				)
 
 @app.callback(
-	[Output(component_id='plt', component_property='value')],
+	[Output(component_id='plt', component_property='figure')],
 	[
 	Input(component_id='btn-nclicks-1', component_property='n_clicks'),
 	Input(component_id='btn-nclicks-2', component_property='n_clicks'),
@@ -649,7 +654,6 @@ def checkDrpDown(opt, ind):
 	)
 
 def graphing(btn_1, btn_2, btn_3, btn_4, sliceVar, slicePlot, sliceVal, g_comp):
-	#btn_1=btn_2=btn_3 = 0
 	global fileCheck
 
 
@@ -668,12 +672,10 @@ def graphing(btn_1, btn_2, btn_3, btn_4, sliceVar, slicePlot, sliceVal, g_comp):
 		
 	elif 'btn-nclicks-4' in changed_id_1:
 		return gCompPlot(sliceVar, sliceVal, slicePlot, g_comp)
+	else:
+		return [{}]
 
-	
-			
 
-
-	
 
 	#fig.update_traces(text = 'percent+label')
 	
@@ -691,10 +693,10 @@ def scatterPlot(sliceVar, sliceVal, slicePlot, g_comp):
 		fig = px.scatter(slicedDfAtVarX, x="r", y="jx", color=slicePlot, height=700, width=700) # color='PAE' , color=slicePlot, height=600, width=600
 		#fig.update_layout(legend_font_color=slicedDfAtVarX[slicePlot])
 		#fig.add_traces(px.scatter(data_frame=slicedDfAtVarX, x="r", y="jx",  height=700, width=700))
-		return dcc.Graph(figure=fig.show())
-		
+		return [fig]
+		#dcc.Graph(figure=fig.show())
 	else:
-		return dcc.Graph(figure=[go.Figure(data=[])])
+		return [{}]
 
 def contourPlot(sliceVar, sliceVal, slicePlot, g_comp):
 	global parsedDf, listOfDf 
@@ -711,9 +713,9 @@ def contourPlot(sliceVar, sliceVal, slicePlot, g_comp):
 		))
 
 		fig.update_layout(height=700, width=700)
-		return fig.show()
+		return [fig]
 	else:
-		return dcc.Graph(figure={})
+		return [{}]
 
 def surfacePlot(sliceVar, sliceVal, slicePlot, g_comp):
 	global parsedDf, listOfDf 
@@ -724,28 +726,25 @@ def surfacePlot(sliceVar, sliceVal, slicePlot, g_comp):
 		fig = go.Figure(data=[go.Surface(z=df.values)])
 		fig.update_layout(title='3D '+slicePlot, autosize=False,
 						width=700, height=700)
-		return fig.show()
+		return [fig]
 	else:
-		error=dbc.Alert( 
-		        children=[html.B("Please enter a file ")],
-		        className="alert alert-dismissible alert-warning",
-		        dismissable=False,
-		        is_open=True,
-				)
-		return dcc.Graph(figure={})
+		return [{}]
 
 
 def gCompPlot(sliceVar, sliceVal, slicePlot, g_comp):
 
-	global parsedDf, fileCheck 
+	global parsedDf, fileCheck, listOfDf 
 	if fileCheck is True: 
-		print(g_comp)
+		#print(g_comp)
 		#print("plotted button:",listOfDf)
 		for i, x in enumerate(listOfDf):
-			parsedDF = dx.filterOnCompressionThreshold(x, g_comp)
+			listOfDf[i] = dx.filterOnCompressionThreshold(x, g_comp)
+
+
+		return [{}]
 
 	else:
-		return dcc.Graph(figure={})
+		return [{}]
 
 
 	#print(parsedDf)
@@ -758,10 +757,6 @@ def gCompPlot(sliceVar, sliceVal, slicePlot, g_comp):
 
 #----------------------------------------------------------------------------------#
 
-#GComp
-def compressionFilteration(COMP_THRESHOLD):
-	pass
-	return 0 ##
 
 
 #----------------------------------------------------------------------------------#
