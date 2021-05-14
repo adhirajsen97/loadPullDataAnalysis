@@ -4,6 +4,17 @@ Follow the link for [API-Documentation](https://github.com/0xrutvij/loadPullData
 
 To install the API module as a local python pacakge, run `pip3 install .`
 
+Install requirements.txt:
+  `pip3 install -r requirements.txt`
+
+Create Unix Executable:
+
+        ```
+        cd <Path to repository>/GUI_Dash/
+        cp app.py ./app
+        chmod 755 app
+        ```
+
 ### Reposito-ree
 ```
 .
