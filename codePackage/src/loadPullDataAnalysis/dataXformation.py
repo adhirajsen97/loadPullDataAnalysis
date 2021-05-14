@@ -187,6 +187,8 @@ def interpolatedSlice(
     cols.remove('gammaTuple')
 
     for i,gamDf in enumerate(listGamDfC):
+        if len(gamDf) == 0:
+            continue
         calcDict = {}
         selVarList = gamDf[[selectedVariable]].to_numpy().transpose().tolist()[0]
         for col in cols:

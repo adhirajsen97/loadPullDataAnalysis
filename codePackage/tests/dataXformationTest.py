@@ -23,7 +23,7 @@ if DEBUG:
 listGamDf = splitOnUniqueGammaTuples(parsedDf)
 
 # calculate the gComp values for each row in each DF.
-if DEBUG:        
+if DEBUG:
         print(listGamDf[0])
 
 for i,x in enumerate(listGamDf):
@@ -36,18 +36,10 @@ for i,x in enumerate(listGamDf):
 
 
 for i in range(len(listGamDf)):
-    #variance = listGamDf[i]['gComp'].var()
     x = filterOnCompressionThreshold(listGamDf[i], 3)
     listGamDf[i] = x
-    #if variance <= 10:
-    #    pass
-        #plt.plot(x, f, '-')
 
-#plt.show()
-#print(listGamDf[0].head())
-# select a variable to slice on
-
-globVar = listGamDf
+print ([len(d) for d in listGamDf])
 
 sliceVarName = input('What variable is the slice going to be on? ')
 
