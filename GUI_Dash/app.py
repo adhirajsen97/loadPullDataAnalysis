@@ -54,8 +54,9 @@ app = dash.Dash(
 # Initiate global varibales that cover the scope of the entire code
 
 global decoded, listOfDf, PICKLE_LOC, fileCheck, parsedDf, slider_range, slct, harm, slicedDfAtVarX
-global btn1hist, btn2hist, btn3hist
-btn1hist = btn2hist = btn3hist = 0
+global btn1hist, btn2hist, btn3hist, btn4hist
+listOfDf = []
+btn1hist = btn2hist = btn3hist = btn4hist = 0
 UPLOAD_DIRECTORY = "./app_uploaded_files"
 PICKLE_LOC = None
 df=pd.DataFrame()
@@ -68,7 +69,7 @@ os.chmod(UPLOAD_DIRECTORY, mode=0o777)
 
 harm_list = ["1","2","3"]
 
-splice_option_list = ["PAE", "Pout", "Gain", "Gcomp"] # 
+splice_option_list = ["PAE", "Pout", "Gain", "gComp"] # 
 
 plot_option_list = ["PAE", "Gain", "gammaTuple", "Pout"]
 
@@ -227,7 +228,7 @@ app.layout = html.Div(className="d-flex flex-column", id='dash-container', child
             html.Div([
             	dbc.Row([
 
-					dbc.Col([html.H6(id='slider-label')],style={"width":"420px"}),
+					dbc.Col([html.H6(id='slider-label')],style={"width":"420px", "padding":"10px"}),
             		
 					dbc.Col([
 						daq.Slider(
@@ -235,12 +236,18 @@ app.layout = html.Div(className="d-flex flex-column", id='dash-container', child
 	                    size=500,
 	                    #value=5, #default value
 	                    handleLabel={"showCurrentValue": True,"label": "VALUE"},
-	            		)], style={"padding-top":"60px"}
+	            		)], style={"padding-top":"20px"}
 	            	)
 	                 
-            	]),
+            	], style={"padding-top":"20px", 'style':'800px'}),
             	dbc.Row([
-            		dbc.Col([html.H6(id='slider-label-2')],style={"width":"420px"}),
+
+            		dbc.Col([
+            			dcc.Checklist(id='gComp-checklist',options=[
+            				{'label' : ' gComp', 'value' : 'gComp'},
+            			], value=[], style={'width': '150px', "padding-top":"15px"}, persistence=False, persistence_type='session')
+            		]),
+            		dbc.Col([html.H6(id='slider-label-2')],style={"width":"500px", 'text-align':'left', 'left':'-250px'}),
             		
 					dbc.Col([
 						daq.Slider(
@@ -248,14 +255,14 @@ app.layout = html.Div(className="d-flex flex-column", id='dash-container', child
 	                    min=0,
 	                    max=10,
 	                    step=1,
-	                    size=500,
+	                    size=300,
 	                    #value=5, #default value
 	                    handleLabel={"showCurrentValue": True,"label": "VALUE"},
-	            		)], style={"padding-top":"60px"}
+	            		)], style={"padding-top":"15px", 'left':'-250px'}
 	            	)
-            	])
+            	], style={"padding-top":"20px"})
             	
-       		], style={"display": "flex", "flexWrap": "wrap"} ),
+       		], style={"display": "flex", "flexWrap": "wrap", "padding-top":"20px"} ),
     	
 
 		    html.Div(id='slider-output'),
@@ -271,7 +278,7 @@ app.layout = html.Div(className="d-flex flex-column", id='dash-container', child
             ], style={"display": "flex", "flexWrap": "wrap", "padding":"15px", "align":"center"}),
 			
 		    
-		    dcc.Graph(id='surface-plot', figure={}) #set proper ID
+		    html.Div(id='plt') #set proper ID
 		]),
 
 		html.Footer() #------------------------Footer
@@ -364,6 +371,8 @@ def file_check(contents, filename):
 			df = mdfParser.parseMdf(mdfLoc)
 			df = mdfParser.calculateMetrics(df)
 			df = mdfParser.unitConversions(df)
+			
+
 			filepath = UPLOAD_DIRECTORY + "/" + filename[:-4]
 			PICKLE_LOC = filepath + '.pkl'
 			mdfParser.exportFiles(df, filepath)
@@ -465,47 +474,55 @@ def drpdowns(slct_harm, slct_splice, slct_plot):
 	[
 	Input(component_id='slct_splice', component_property='value'),
 	Input(component_id='slice', component_property='value'),
+	Input(component_id='gComp-checklist', component_property='value'),
+	
 	Input(component_id='g-comp', component_property='value')
 	]
 
 	)
-def slide(slct, slice, g_comp):
-	global PICKLE_LOC, harm
+def slide(slct, slice, chk_gComp, g_comp):
+	global PICKLE_LOC, fileCheck, harm
 	min = 0
 	max = 100
 	step = 1
 	value = 0
+	n = 0
 
-	if PICKLE_LOC is not None:
+
+	if fileCheck is True:
 		if slct is not None:
+			
 			min, max, step, value = getVarRangeForSlice(harm, slct)
 			#slider_output = "Slider Value chosen:  {}".format(slice)
-			slider_label = checkDrpDown(slct)
-			if slct == "Gcomp":
-				slider_label_2 = checkDrpDown(slct)
-			else:
-				slider_label_2 = checkDrpDown(None)
-
-		
+			n = 1
+			slider_label = checkDrpDown(slct, n)
 		else:
 			
 			#slider_output = "Slider Value chosen:  {}".format("0")
-			slider_label = checkDrpDown(slct)
+			n = 1
+			slider_label = checkDrpDown(slct, n)
+			
 			pass
+		if chk_gComp is not None:
+			n = 2
+			slider_label_2 = check_gComp(chk_gComp, slct, n)
+
+		else:
+			n= 2
+			slider_label_2 = check_gComp(None, slct, n)
+		
+		
+
+		
+			
 
 		
 	else:
-		slider_label = checkDrpDown(slct)
+		n=1
+		slider_label = checkDrpDown(slct, n)
+		n=2
+		slider_label_2 = check_gComp(chk_gComp, slct, n)
 		
-		slider_label_2 = checkDrpDown(slct)
-		
-
-
-
-
-
-
-
 	
 	return min, max, step, slider_label, slider_label_2 #slider_output,
 
@@ -521,8 +538,17 @@ def getVarRangeForSlice(harm, slice):
 		parsedDf = dx.splitGammaTuple(parsedDf)
 		listGamDf = dx.splitOnUniqueGammaTuples(parsedDf)
 
+		for i,x in enumerate(listGamDf):
+				listGamDf[i] =  dx.calcGComp(x)
+
+
+		
+
+
+
 		df = parsedDf
-		listOfDf = listGamDf 
+		listOfDf = listGamDf
+		
 		varInfoDict = dx.pickVariable(slice, parsedDf)
 
 		maxV = varInfoDict['maxVal'] 
@@ -539,11 +565,48 @@ def getVarRangeForSlice(harm, slice):
 				else:
 				    marks = {i: i for i in range(minV, maxV + 1, step)}'''
 
-def checkDrpDown(opt):
-	global PICKLE_LOC
+def check_gComp(opt, slct, ind):
+	global fileCheck
+	if "gComp" in opt:
+		if fileCheck is False:
+			return dbc.Alert( 
+		        children=[html.B("Please Choose a MDF File Input First!")],
+		        className="alert alert-dismissible alert-warning",
+		        dismissable=False,
+		        is_open=True,
+				)
 
+		else:
+			if slct is None:
+				return dbc.Alert( 
+		            children=[html.B("Please Choose a Slicing Slector!")],
+		            className="alert alert-dismissible alert-danger",
+		            dismissable=False,
+		            is_open=True,
+					)
+			return dbc.Alert(
+	            children=[html.B("Choose G Compression Selector ".format(opt))],
+	            className="alert alert-dismissible alert-success",
+	            dismissable=False,
+	            is_open=True,
+				)
+
+	else:
+		return dbc.Alert( 
+	            children=[html.B("Enable G Compression Slice")],
+	            className="alert alert-dismissible alert-danger",
+	            dismissable=False,
+	            is_open=True,
+				)
+
+
+
+def checkDrpDown(opt, ind):
+	global fileCheck
+
+	
 	if opt is not None:
-		if PICKLE_LOC is None:
+		if fileCheck is False:
 			return dbc.Alert( 
 		        children=[html.B("Please Choose a MDF File Input First!")],
 		        className="alert alert-dismissible alert-warning",
@@ -559,16 +622,17 @@ def checkDrpDown(opt):
             is_open=True,
 			)
 	
-
-	return dbc.Alert( 
-            children=[html.B("Please assign Slicing/Plotting Selectors ^^")],
-            className="alert alert-dismissible alert-danger",
-            dismissable=False,
-            is_open=True,
-			)
+	else:
+		
+		return dbc.Alert( 
+	            children=[html.B("Please assign Slicing/Plotting Selectors ^^")],
+	            className="alert alert-dismissible alert-danger",
+	            dismissable=False,
+	            is_open=True,
+				)
 
 @app.callback(
-	[Output(component_id='surface-plot', component_property='figure')],
+	[Output(component_id='plt', component_property='value')],
 	[
 	Input(component_id='btn-nclicks-1', component_property='n_clicks'),
 	Input(component_id='btn-nclicks-2', component_property='n_clicks'),
@@ -576,56 +640,62 @@ def checkDrpDown(opt):
 	Input(component_id='btn-nclicks-4', component_property='n_clicks'),
 	Input(component_id='slct_splice', component_property='value'),
 	Input(component_id='slct_plot', component_property='value'),
-	Input(component_id='slice', component_property='value')]
+	Input(component_id='slice', component_property='value'),
+	Input(component_id='g-comp', component_property='value')]
 	)
 
-def graphing(btn_1, btn_2, btn_3, btn_4, sliceVar, slicePlot, sliceVal):
+def graphing(btn_1, btn_2, btn_3, btn_4, sliceVar, slicePlot, sliceVal, g_comp):
 	#btn_1=btn_2=btn_3 = 0
-	global btn1hist, btn2hist, btn3hist
-	fig=None
+	global fileCheck
 
 
-	btn_1=0 if btn_1 is None else btn_1
-	btn_2=0 if btn_2 is None else btn_2
-	btn_3=0 if btn_3 is None else btn_3
-	btn_4=0 if btn_4 is None else btn_4
+	changed_id_1 = [p['prop_id'] for p in dash.callback_context.triggered][0]
 
-	if btn_1 > btn1hist:
-		fig = scatterPlot(sliceVar, sliceVal, slicePlot)
-		btn1hist = btn_1
-	elif btn_2 > btn2hist:
-		fig = contourPlot(sliceVar, sliceVal, slicePlot)
-		btn2hist = btn_2
-	elif btn_3 > btn3hist:
-		fig = surfacePlot(sliceVar, sliceVal, slicePlot)
-		btn3hist = btn_3
-	'''if btn_4> 0:
-		fig = (sliceVar, sliceVal, slicePlot)'''
+
+	
+	if 'btn-nclicks-1' in changed_id_1:
+		return scatterPlot(sliceVar, sliceVal, slicePlot, g_comp)
+
+	elif 'btn-nclicks-2' in changed_id_1:
+		return contourPlot(sliceVar, sliceVal, slicePlot, g_comp)
+
+	elif 'btn-nclicks-3' in changed_id_1:
+		return surfacePlot(sliceVar, sliceVal, slicePlot, g_comp)
+		
+	elif 'btn-nclicks-4' in changed_id_1:
+		return gCompPlot(sliceVar, sliceVal, slicePlot, g_comp)
+
+	
+			
+
+
 	
 
 	#fig.update_traces(text = 'percent+label')
 	
 	
-	pio.renderers.default = 'browser'
 	
-    # 
-	return fig if fig is None else [pio.show(fig)]
 
 	
-def scatterPlot(sliceVar, sliceVal, slicePlot):
-	global parsedDf, listOfDf, PICKLE_LOC 
-	if listOfDf is not None:
+def scatterPlot(sliceVar, sliceVal, slicePlot, g_comp):
+	global parsedDf, listOfDf 
+	if fileCheck is True:
 		selList, slicedDfAtVarX = dx.interpolatedSlice(listOfDf, sliceVar, sliceVal)
 		#print(slicedDfAtVarX.head())
-		fig = go.Figure()
+		#fig = go.Figure()
 		
-		fig = px.scatter(data_frame=slicedDfAtVarX, x="r", y="jx", color=slicePlot, hover_data=[slicePlot], height=700, width=700) # color='PAE' , color=slicePlot, height=600, width=600
+		fig = px.scatter(slicedDfAtVarX, x="r", y="jx", color=slicePlot, height=700, width=700) # color='PAE' , color=slicePlot, height=600, width=600
 		#fig.update_layout(legend_font_color=slicedDfAtVarX[slicePlot])
-		fig.update_traces(textposition='top center')
-	return fig
+		#fig.add_traces(px.scatter(data_frame=slicedDfAtVarX, x="r", y="jx",  height=700, width=700))
+		return dcc.Graph(figure=fig.show())
+		
+	else:
+		return dcc.Graph(figure=[go.Figure(data=[])])
 
-def contourPlot(sliceVar, sliceVal, slicePlot):
-	if listOfDf is not None:
+def contourPlot(sliceVar, sliceVal, slicePlot, g_comp):
+	global parsedDf, listOfDf 
+
+	if fileCheck is True:
 		selList, slicedDfAtVarX = dx.interpolatedSlice(listOfDf, sliceVar, sliceVal)
 	
 		fig = go.Figure(data =
@@ -637,19 +707,46 @@ def contourPlot(sliceVar, sliceVal, slicePlot):
 		))
 
 		fig.update_layout(height=700, width=700)
-		return fig
+		return fig.show()
+	else:
+		return dcc.Graph(figure={})
 
-def surfacePlot(sliceVar, sliceVal, slicePlot):
-	if listOfDf is not None:
+def surfacePlot(sliceVar, sliceVal, slicePlot, g_comp):
+	global parsedDf, listOfDf 
+
+	if fileCheck is True:
 		selList, slicedDfAtVarX = dx.interpolatedSlice(listOfDf, sliceVar, sliceVal)
 		df =  slicedDfAtVarX[['r','jx', slicePlot]].copy()
 		fig = go.Figure(data=[go.Surface(z=df.values)])
 		fig.update_layout(title='3D '+slicePlot, autosize=False,
 						width=700, height=700)
-		return fig
+		return fig.show()
+	else:
+		error=dbc.Alert( 
+		        children=[html.B("Please enter a file ")],
+		        className="alert alert-dismissible alert-warning",
+		        dismissable=False,
+		        is_open=True,
+				)
+		return dcc.Graph(figure={})
 
 
-		
+def gCompPlot(sliceVar, sliceVal, slicePlot, g_comp):
+
+	global parsedDf, fileCheck 
+	if fileCheck is True: 
+		print(g_comp)
+		#print("plotted button:",listOfDf)
+		for i, x in enumerate(listOfDf):
+			parsedDF = dx.filterOnCompressionThreshold(x, g_comp)
+
+	else:
+		return dcc.Graph(figure={})
+
+
+	#print(parsedDf)
+	#filterOnCompressionThreshold(df: pd.DataFrame, compVal: float) -> pd.DataFrame:
+	#dx.filterOnCompressionThreshold()
 		
 
 		
