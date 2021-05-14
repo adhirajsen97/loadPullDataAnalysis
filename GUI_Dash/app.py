@@ -111,8 +111,9 @@ app.layout = html.Div(className="d-flex flex-column", id='dash-container', child
 						html.Li("Our parsed DataFrame is then fed through Dashboard used by the user to filter the DataFrame."),
 						html.Li("The sliced and filtered DataFrame is used to render 3d plot using a python package, Plotly.")
 					]),
-				html.P(className="lead" , children = [
-					html.A("Learn More.", className="btn btn-primary btn-lg", href="https://www.qorvo.com", target="_blank", role="button")
+				html.Div(className="lead" , children = [
+					html.A("Read Documentation", className="btn btn-primary btn-lg", href="assets/index.html", target="_blank", role="button", style={"padding":"5px", "border-style":"dotted", "border-color":"black", "font-size":"15px"}),
+					html.A("Explore GitHub Repo", className="btn btn-primary btn-lg", href="https://github.com/0xrutvij/loadPullDataAnalysis/blob/main/loadpulldataanalysis.pdf", target="_blank", role="button", style={"padding":"5px", "border-style":"dotted", "border-color":"black", "font-size":"15px"}),
 					])
 				]),
 
@@ -233,13 +234,12 @@ app.layout = html.Div(className="d-flex flex-column", id='dash-container', child
 					dbc.Col([html.Button('Plot Surface', id='btn-nclicks-3', className = "btn btn-primary", type="button", style={"width":"100px"}),]),
 					dbc.Col([html.Button('Execute gComp Slice on data', id='btn-nclicks-4', className = "btn btn-primary", type="button", style={"width":"150px"}),]),
 					])
-    				#html.Div(id='container-button-timestamp')
             ], style={"display": "flex", "flexWrap": "wrap", "padding":"15px", "align":"center"}),
 		    
 		    dcc.Graph(id='plt', figure={}, style={'width':'700px', 'height':'700px'}) #set proper ID
 		]),
 
-		html.Footer() #------------------------Footer
+		html.Footer() 
 ])
 
 #----------------------------------------------------------------------------------#
@@ -310,23 +310,12 @@ def uploaded_files():
 
 #Filename parse function to check name
 def file_check(contents, filename):
-	#https://docs.faculty.ai/user-guide/apps/examples/dash_file_upload_download.html
-	#print(contents)
-	#content_type, content_string = contents.readlines()
+
 	filename = str(filename)
 	global PICKLE_LOC
-	# API function call
-	# Send contents into MDF Parser
-	# return DF from parser and assign to global DF variable 
-	#decoded = base64.b64decode(contents)
-
-	
 
 	try:
 		if '.mdf' in str(filename):
-		    # Assume that the user uploaded a MDF file
-			
-			
 			save_file(contents, filename)
 			mdfLoc = str(UPLOAD_DIRECTORY+ "/" +filename)
 			df = mdfParser.parseMdf(mdfLoc)
@@ -355,9 +344,6 @@ def save_file(content, name):
         fp.write(base64.decodebytes(data))
 #----------------------------------------------------------------------------------#
 
-
-
-#----------------------------------------------------------------------------------#
 #Callback for harm slice
 @app.callback(
 	[
@@ -391,34 +377,13 @@ def drpdowns(slct_harm, slct_splice, slct_plot):
 	else:
 		splicing_message = "Slice option chosen:  {}".format("None")
 
-	
-
-	'''
-   
-	################## Filtering DF by harmonic #######################
-	#print(df["harmonic"])
-				df_harm1 = df[(df["harmonic"]==slct_harm)]
-				df_harm1 = df_harm1[['gammaTuple', 'power', 'Pin', 'Pout', 'Gain', 'PAE', 'drainEff', 'r', 'x']].copy()
-				df.set_index(keys=['gammaTuple'], drop=False,inplace=True)
-				uniqGammas=df['gammaTuple'].unique().tolist()
-				listGamDf = []
-				for gam in uniqGammas:
-				    gamDf = df_harm1.loc[df_harm1.gammaTuple==gam]
-				    gamDf.index = range(len(gamDf))
-				    listGamDf.append(gamDf)
-	'''
-	###################################################################
-
 	harm_message = "Harmonic set to:  {}".format(slct_harm)
 	harm = slct_harm
 	
 	plot_message = "Plotting variable chosen:  {}".format(slct_plot)
 
 
-	return harm_message, splicing_message, plot_message #, fig
-
-
-
+	return harm_message, splicing_message, plot_message 
 
 #----------------------------------------------------------------------------------#
 
@@ -472,12 +437,6 @@ def slide(slct, slice, chk_gComp, g_comp):
 			n= 2
 			slider_label_2 = check_gComp(None, slct, n)
 		
-		
-
-		
-			
-
-		
 	else:
 		n=1
 		slider_label = checkDrpDown(slct, n)
@@ -486,8 +445,6 @@ def slide(slct, slice, chk_gComp, g_comp):
 		
 	
 	return min, max, step, slider_label, slider_label_2 #slider_output,
-
-#----------------------------------------------------------------------------------#
 
 def getVarRangeForSlice(harm, slice):
 	global parsedDf, listOfDf, PICKLE_LOC
@@ -502,11 +459,6 @@ def getVarRangeForSlice(harm, slice):
 		for i,x in enumerate(listGamDf):
 				listGamDf[i] =  dx.calcGComp(x)
 
-
-		
-
-
-
 		df = parsedDf
 		listOfDf = listGamDf
 		
@@ -520,11 +472,6 @@ def getVarRangeForSlice(harm, slice):
 
 	else:
 		return 0
-
-	'''if marks:
-				    step = None
-				else:
-				    marks = {i: i for i in range(minV, maxV + 1, step)}'''
 
 def check_gComp(opt, slct, ind):
 	global fileCheck
@@ -561,7 +508,6 @@ def check_gComp(opt, slct, ind):
 				)
 
 
-
 def checkDrpDown(opt, ind):
 	global fileCheck
 
@@ -591,6 +537,7 @@ def checkDrpDown(opt, ind):
 	            dismissable=False,
 	            is_open=True,
 				)
+#----------------------------------------------------------------------------------#
 
 @app.callback(
 	[Output(component_id='plt', component_property='figure')],
@@ -610,8 +557,6 @@ def graphing(btn_1, btn_2, btn_3, btn_4, sliceVar, slicePlot, sliceVal, g_comp):
 
 
 	changed_id_1 = [p['prop_id'] for p in dash.callback_context.triggered][0]
-
-
 	
 	if 'btn-nclicks-1' in changed_id_1:
 		return scatterPlot(sliceVar, sliceVal, slicePlot, g_comp)
@@ -623,18 +568,10 @@ def graphing(btn_1, btn_2, btn_3, btn_4, sliceVar, slicePlot, sliceVal, g_comp):
 		return surfacePlot(sliceVar, sliceVal, slicePlot, g_comp)
 		
 	elif 'btn-nclicks-4' in changed_id_1:
-		return gCompPlot(sliceVar, sliceVal, slicePlot, g_comp)
+		return gCompFilter(sliceVar, sliceVal, slicePlot, g_comp)
 	else:
 		return [{}]
 
-
-
-	#fig.update_traces(text = 'percent+label')
-	
-	
-	
-
-	
 def scatterPlot(sliceVar, sliceVal, slicePlot, g_comp):
 	global parsedDf, listOfDf 
 	if fileCheck is True:
@@ -683,7 +620,7 @@ def surfacePlot(sliceVar, sliceVal, slicePlot, g_comp):
 		return [{}]
 
 
-def gCompPlot(sliceVar, sliceVal, slicePlot, g_comp):
+def gCompFilter(sliceVar, sliceVal, slicePlot, g_comp):
 
 	global parsedDf, fileCheck, listOfDf 
 	if fileCheck is True: 
@@ -698,55 +635,6 @@ def gCompPlot(sliceVar, sliceVal, slicePlot, g_comp):
 	else:
 		return [{}]
 
-
-	#print(parsedDf)
-	#filterOnCompressionThreshold(df: pd.DataFrame, compVal: float) -> pd.DataFrame:
-	#dx.filterOnCompressionThreshold()
-		
-
-		
-
-
-#----------------------------------------------------------------------------------#
-
-
-
-#----------------------------------------------------------------------------------#
-
-
-
-
-
-'''
-
-
-@app.callback(
-	[Output(component_id='slider-output', component_property='children')],
-	Input(component_id='PAE', component_property='value')
-	)
-def sliderVal(val):
-	global slider_range, parsedDf
-	print(parsedDf)
-
-	return "You have selected: {}".format(val)
-'''
-	
-'''
-@app.callback([
-	Output(component_id='output_container', component_property='children'),
-	Output(component_id='surface', component_property='figure'),
-	Input(component_id='slct-splice', component_property='options')
-	#Input(component_id='slct-plot', component_property='options', classname='plot_selector')
-	])
-def update_graph(option_splice):
-	print(option_Splice)
-	contaner
-
-
-def spliced():
-	return 0
-'''
-
 #----------------------------------------------------------------------------------#
 
 @server.route("/LoadPull-Dashboard/")
@@ -755,9 +643,11 @@ def my_dash_app():
 
 def open_browser():
       webbrowser.open_new('http://127.0.0.1:8050/LoadPull-Dashboard/')
-      
 
 if __name__ == '__main__':
 	Timer(1, open_browser).start();
 	app.run_server(debug=True)
+
+#----------------------------------------------------------------------------------#
+
 
