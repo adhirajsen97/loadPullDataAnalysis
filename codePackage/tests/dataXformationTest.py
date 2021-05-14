@@ -36,17 +36,19 @@ for i,x in enumerate(listGamDf):
 
 
 for i in range(len(listGamDf)):
-    if i > 10:
-            break
-    variance = listGamDf[i]['gComp'].var()
+    #variance = listGamDf[i]['gComp'].var()
     x = filterOnCompressionThreshold(listGamDf[i], 3)
-    if variance <= 10:
-        pass
+    listGamDf[i] = x
+    #if variance <= 10:
+    #    pass
         #plt.plot(x, f, '-')
 
 #plt.show()
 #print(listGamDf[0].head())
 # select a variable to slice on
+
+globVar = listGamDf
+
 sliceVarName = input('What variable is the slice going to be on? ')
 
 print(pickVariable(sliceVarName, parsedDf))
