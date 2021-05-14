@@ -39,8 +39,6 @@ for i in range(len(listGamDf)):
     x = filterOnCompressionThreshold(listGamDf[i], 3)
     listGamDf[i] = x
 
-print ([len(d) for d in listGamDf])
-
 sliceVarName = input('What variable is the slice going to be on? ')
 
 print(pickVariable(sliceVarName, parsedDf))
