@@ -1,10 +1,14 @@
+#! /usr/local/bin/python3
+
 ##Stuff to add
 # 	- Plotting variable dynamic list Dropdown
 
 
 # lsof -i tcp:8050
 import plotly
+import webbrowser
 from flask import Flask
+from threading import Timer
 
 #print(plotly.__version__)
 #----------------------------------------------------------------------------------#
@@ -69,7 +73,7 @@ os.chmod(UPLOAD_DIRECTORY, mode=0o777)
 
 harm_list = ["1","2","3"]
 
-splice_option_list = ["PAE", "Pout", "Gain", "gComp"] # 
+splice_option_list = ["PAE", "Pout", "Gain"] # 
 
 plot_option_list = ["PAE", "Gain", "gammaTuple", "Pout"]
 
@@ -802,10 +806,11 @@ def spliced():
 def my_dash_app():
     return app.index()
 
-@server.route("/api-calls/")
-def function_calls():
-	return 0
+def open_browser():
+      webbrowser.open_new('http://127.0.0.1:8050/LoadPull-Dashboard/')
+      
 
 if __name__ == '__main__':
+	Timer(1, open_browser).start();
 	app.run_server(debug=True)
 
