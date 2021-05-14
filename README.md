@@ -9,11 +9,9 @@ Install requirements.txt:
 
 Create Unix Executable:
 
-        ```
         cd <Path to repository>/GUI_Dash/
         cp app.py ./app
         chmod 755 app
-        ```
 
 ### Reposito-ree
 ```
