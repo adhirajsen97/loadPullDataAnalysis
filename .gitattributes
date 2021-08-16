@@ -1,2 +1,2 @@
-*.ipynb linguist-detectable=false
-*.gitattributes linguist-language=gitattributes
+* linguist-vendored
+* text=auto*.gitattributes linguist-language=gitattributes
