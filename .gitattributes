@@ -1,1 +1,3 @@
-*.ipynb linguist-documentation
+*.css   diff=css
+*.html  diff=html
+*.py    diff=python
